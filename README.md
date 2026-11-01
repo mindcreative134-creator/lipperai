@@ -1,219 +1,187 @@
 <div align="center">
 
-# 🎬 ClipperAI — Viral Reel Maker & AI Video Clipper
+# 🎬 ClipperAI — 100% Free AI Video Clipper & Viral Reel Maker
+### *The Ultimate Open-Source OpusClip & Klap Alternative — No Watermark, No Subscription, Zero Limits*
 
 <p align="center">
-  <b>Transform any long-form video into high-engagement 9:16 viral shorts with word-by-word bouncing captions, audio excitement analysis, and zero mid-sentence cuts — 100% Free & Open Source!</b>
+  <b>Turn any long-form YouTube video, podcast, or stream into high-retention 9:16 Shorts, Reels, and TikToks with word-by-word bouncing captions (Alex Hormozi style), AI dialogue excitement detection, and zero mid-sentence cuts!</b>
 </p>
 
+[![GitHub Release](https://img.shields.io/github/v/release/mindcreative134-creator/lipperai?color=brightgreen&label=Official%20APK%20Release)](https://github.com/mindcreative134-creator/lipperai/releases)
 [![Flutter](https://img.shields.io/badge/Flutter-3.24.0-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
-[![Android](https://img.shields.io/badge/Platform-Android-3DDC84?logo=android&logoColor=white)](https://www.android.com)
+[![Android](https://img.shields.io/badge/Platform-Android%205.0%2B-3DDC84?logo=android&logoColor=white)](https://www.android.com)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://python.org)
-[![FFmpeg](https://img.shields.io/badge/FFmpeg-Optimized%20Pipeline-007808?logo=ffmpeg&logoColor=white)](https://ffmpeg.org)
-[![SQLite](https://img.shields.io/badge/Database-SQLite%20Offline-003B57?logo=sqlite&logoColor=white)](https://sqlite.org)
-[![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
-[![GitHub Release](https://img.shields.io/github/v/release/mindcreative134-creator/lipperai?color=brightgreen&label=APK%20Release)](https://github.com/mindcreative134-creator/lipperai/releases)
+[![FFmpeg](https://img.shields.io/badge/FFmpeg-Turbo%209%3A16-007808?logo=ffmpeg&logoColor=white)](https://ffmpeg.org)
+[![Database](https://img.shields.io/badge/Storage-SQLite%20Offline-003B57?logo=sqlite&logoColor=white)](https://sqlite.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![100% Free](https://img.shields.io/badge/Pricing-100%25%20Free%20Forever-success.svg)](#-comparison-matrix)
 
 <br/>
 
 <a href="https://github.com/mindcreative134-creator/lipperai/releases/latest">
-  <img src="https://img.shields.io/badge/⬇️_DOWNLOAD_OFFICIAL_APK-v1.0.1-success?style=for-the-badge&logo=android" alt="Download APK" height="42">
+  <img src="https://img.shields.io/badge/📲_DOWNLOAD_ANDROID_APK-v1.0.2-success?style=for-the-badge&logo=android" alt="Download APK" height="44">
 </a>
-<a href="http://localhost:5000">
-  <img src="https://img.shields.io/badge/🌐_OPEN_WEB_STUDIO-PORT_5000-blueviolet?style=for-the-badge" alt="Web Studio" height="42">
+<a href="https://clipperai-reels.loca.lt">
+  <img src="https://img.shields.io/badge/🌐_OPEN_ONLINE_CLOUD_STUDIO-FREE-blueviolet?style=for-the-badge&logo=google-chrome" alt="Web Studio" height="44">
 </a>
 
 </div>
 
 ---
 
-## 🌟 Why ClipperAI?
+## 🔍 Search Keywords & SEO Intent
 
-Most viral clip creators (like OpusClip, Klap, or Submagic) charge heavy monthly subscriptions, enforce watermark restrictions, or cut speakers off mid-thought. 
+> **Looking for a free alternative to OpusClip, Klap, Submagic, or Vizard?**  
+> **ClipperAI** is built specifically for creators, podcasters, streamers, and video editors who want **automated AI clip detection, word-by-word bouncing subtitles, and 9:16 vertical video conversion** without paying $29 to $99 every single month.
 
-**ClipperAI** solves all of this with a completely free, local-first multi-modal pipeline:
-
-| Feature | ❌ Typical Paid SaaS | ✨ ClipperAI (Free & Open Source) |
-| :--- | :--- | :--- |
-| **Price** | $29 – $99 / month | **100% Free Forever** |
-| **Speaker Cuts** | Cuts randomly at fixed 30s/60s mark | **Sentence Boundary Snapper** (Zero mid-sentence cuts) |
-| **Subtitles** | Static lines or paid add-on | **Dynamic Word-by-Word Bouncing Pop** (Hormozi style) |
-| **Rendering Speed** | Queued on congested cloud servers | **Ultra-Fast FFmpeg Blur Pipeline** (~10s per clip) |
-| **Mobile App** | Web-only or restricted | **Native Flutter App (`com.clipperai.reels`) + SQLite** |
-| **Data Privacy** | All your videos sent to 3rd party servers | **Runs locally on your own machine & home network** |
+* **Primary Queries**: `AI Video Clipper`, `OpusClip Free Alternative`, `Klap Alternative`, `Submagic Alternative Free`, `YouTube to Shorts Maker AI`, `Viral Reel Generator`, `Alex Hormozi Captions App`, `Auto Subtitle Generator`, `Video Highlight Cutter`, `Open Source AI Video Editor`.
 
 ---
 
-## ✨ Key Features
+## 🏆 Comparison Matrix: ClipperAI vs Paid SaaS
+
+| Capability | ✨ ClipperAI (Free & Open Source) | ❌ OpusClip | ❌ Klap.app | ❌ Submagic |
+| :--- | :---: | :---: | :---: | :---: |
+| **Price** | **100% Free Forever** | \$29 – \$99/month | \$29/month | \$20 – \$50/month |
+| **Watermark** | **Zero Watermark** | Watermarked (Free tier) | Watermarked | Watermarked |
+| **Sentence Snapper** | ✅ **Zero mid-sentence cuts** | ❌ Cuts randomly at timer | ❌ Frequent cutoffs | ❌ Fixed cutoffs |
+| **Word Pop Subtitles** | ✅ **Alex Hormozi Yellow Pop** | Paid add-on | Paid tier only | Limited styles |
+| **Mobile App** | ✅ **Native Android APK + SQLite** | ❌ Web-only | ❌ Web-only | ❌ Web-only |
+| **Offline Privacy** | ✅ **Runs locally on your device** | ❌ Uploads to 3rd party | ❌ Cloud only | ❌ Cloud only |
+| **Export Quality** | **Full HD 1080p / 60fps** | Limited on Free | Limited on Free | Limited on Free |
+
+---
+
+## 🧠 Multi-Modal AI Architecture
 
 ```
-                                      ┌──────────────┐
-                                      │ YouTube URL  │
-                                      └──────┬───────┘
-                                             │
-                       ┌─────────────────────┴─────────────────────┐
-                       ▼                                           ▼
-             [ Audio Energy Track ]                     [ Full Transcript ]
-             (Pitch / Volume / RMS)                     (Hindi, English, Auto)
-                       │                                           │
-                       └─────────────────────┬─────────────────────┘
-                                             ▼
-                                  ┌────────────────────┐
-                                  │ Multi-Modal Fusion │
-                                  │  Excitement Engine │
-                                  └──────────┬─────────┘
-                                             ▼
-                                  ┌────────────────────┐
-                                  │  Sentence Snapper  │ ──► Zero mid-sentence cuts
-                                  └──────────┬─────────┘
-                                             ▼
-                                  ┌────────────────────┐
-                                  │ Bouncing Pop ASS   │ ──► Word-by-word synced highlight
-                                  └──────────┬─────────┘
-                                             ▼
-                                  ┌────────────────────┐
-                                  │ Fast 9:16 Renderer │ ──► Dynamic blurred vertical format
-                                  └──────────┬─────────┘
-                                             │
-                       ┌─────────────────────┴─────────────────────┐
-                       ▼                                           ▼
-              [ Local Web Studio ]                       [ Flutter Mobile App ]
-             (Live on Port 5000)                        (Saved to Local SQLite)
+                                  ┌───────────────────────────┐
+                                  │   YouTube Long-Form URL   │
+                                  └─────────────┬─────────────┘
+                                                │
+                       ┌────────────────────────┴────────────────────────┐
+                       ▼                                                 ▼
+          [ Audio Dynamics Engine ]                             [ Smart Transcriber ]
+          - RMS Energy & Volume Spikes                          - Multi-Lingual Captions
+          - Laughter & Pitch Analysis                           - Word-Level Timestamps
+                       │                                                 │
+                       └────────────────────────┬────────────────────────┘
+                                                ▼
+                                    ┌───────────────────────┐
+                                    │ Multi-Modal Fusion AI │
+                                    │ Excitement Scoring    │
+                                    └───────────┬───────────┘
+                                                ▼
+                                    ┌───────────────────────┐
+                                    │   Sentence Snapper    │ ──► Zero mid-thought cuts
+                                    │ (. ! ? । & Pauses)   │
+                                    └───────────┬───────────┘
+                                                ▼
+                                    ┌───────────────────────┐
+                                    │ Bouncing ASS Subtitle │ ──► Word-by-word active pop
+                                    │ Engine (Hormozi style)│
+                                    └───────────┬───────────┘
+                                                ▼
+                                    ┌───────────────────────┐
+                                    │ Fast 9:16 Blur Render │ ──► 10-15s per vertical clip
+                                    └───────────┬───────────┘
+                                                │
+                       ┌────────────────────────┴────────────────────────┐
+                       ▼                                                 ▼
+             [ Web Studio / PWA ]                             [ Android APK Mobile ]
+          - Accessible on Wi-Fi / 5G                       - 100% On-Device Standalone
+          - Real-Time Progress Bar                         - Persistent SQLite Database
 ```
 
-### 🎯 1. Smart Sentence Boundary Snapping
-Never suffer from a clip that cuts off mid-word. Our intelligent sentence boundary engine inspects punctuation (`.`, `?`, `!`, `।`) and speech pauses (>0.7s) to ensure every clip begins and ends on a finished, punchy thought.
+---
 
-### ⚡ 2. Word-by-Word Voice-Synced Subtitles (Hormozi Style)
-Subtitles are generated directly into high-fidelity ASS (Advanced SubStation Alpha) format:
-- **Active Word Pop Animation**: Spoken words bounce with `\fscx125\fscy125\t(0,90,\fscx100\fscy100)` scaling.
-- **Viral Color Accents**: Spoken words highlight in vibrant electric yellow (`&H0000FFFF&`) with thick black borders and neon drop-shadows.
-- **Multiple Visual Styles**: Supports *Viral Yellow (Hormozi)*, *Minimal Clean White*, and *Cyber Neon Cyan*.
+## ✨ Core Features & Highlights
 
-### 📱 3. Native Flutter Mobile App
-- **Package ID**: `com.clipperai.reels`
-- **Offline SQLite Storage (`sqflite`)**: Saves all rendered clips locally with duration, timestamps, and thumbnail data.
-- **One-Tap Share & Download**: Instantly export to your phone gallery for Instagram Reels, YouTube Shorts, or TikTok.
-- **Dark Neon Cyberpunk Theme**: Styled with neon green/purple accents and smooth animations.
+### 1. ✂️ Intelligent Sentence Boundary Snapper
+Traditional AI clippers cut videos strictly at 30 or 60 seconds, leaving the speaker cutting off mid-word.  
+ClipperAI uses punctuation analysis (`.`, `?`, `!`, `।`) and acoustic silence detection (>0.7s) to ensure every clip starts and concludes on a **finished, punchy thought**.
 
-### 🚀 4. 10x Turbo 9:16 Vertical Blur Pipeline
-Converting 16:9 widescreen to 9:16 vertical reels often chokes CPU power. ClipperAI uses a 2-stage FFmpeg pipeline that downscales background frames before applying Gaussian box-blur, delivering full-HD 60fps renders in just **10-15 seconds per reel**.
+### 2. 🟡 Kinetic Word-by-Word Bouncing Subtitles (Hormozi Style)
+- **Active Word Pop**: Spoken words bounce dynamically with `\fscx125\fscy125\t(0,90,\fscx100\fscy100)` ASS transform effects.
+- **Viral Color Accents**:
+  - `Viral Hormozi`: Electric Yellow (`#FACC15`) with bold black stroke and drop-shadow.
+  - `Neon Gamer`: Futuristic Cyan Glow (`#06B6D4`).
+  - `Minimal Clean`: High-contrast pure white typography.
+  - `Breaking Box`: Bold news-style red accent capsule.
+
+### 3. 📱 Native Android Mobile App (`com.clipperai.reels`)
+- **100% On-Device Mode**: No laptop or local server required! Generates viral highlights directly inside your Android smartphone.
+- **Interactive 9:16 Reel Player**: Watch generated clips full-screen with real-time bouncing animated captions.
+- **Offline SQLite Database**: Automatically saves all reel metadata, timestamps, and thumbnails locally.
+- **One-Tap YouTube Timestamp Launcher**: Jumps straight to the exact second in the YouTube app.
+
+### 4. ⚡ Turbo 9:16 Vertical Blur Engine
+Converts 16:9 widescreen footage into 9:16 vertical shorts in just **10-15 seconds per reel** using an optimized 2-stage FFmpeg background blur pipeline.
 
 ---
 
-## 📱 Mobile App (Android APK)
+## 📲 Download & Installation
 
-The Flutter mobile app connects seamlessly to your local server over Wi-Fi, allowing you to trigger clip generation from your sofa and manage your clips offline in SQLite.
+### Android Smartphone (APK)
+1. Download the latest official release: [**`ClipperAI-v1.0.2.apk`**](https://github.com/mindcreative134-creator/lipperai/releases/latest).
+2. Tap the downloaded APK to install on your Android device (Android 5.0+ supported).
+3. Paste any YouTube link, choose your subtitle style, and tap **"Generate 9:16 Viral Reels"**!
 
-### 📥 Download & Install
-1. Head over to [GitHub Releases](https://github.com/mindcreative134-creator/lipperai/releases/latest).
-2. Download **`ClipperAI-v1.0.0.apk`**.
-3. Tap on the downloaded APK to install on any Android device (Android 5.0+ supported).
-
----
-
-## 💻 Quick Start (Web & Local Server)
-
-### 1. Clone & Setup
+### Web Studio / PC (Python)
 ```bash
-# Clone the repository
+# 1. Clone the repository
 git clone https://github.com/mindcreative134-creator/lipperai.git
 cd lipperai
 
-# Install Python requirements
+# 2. Install requirements
 pip install -r requirements.txt
-```
 
-### 2. Launch the Web Studio
-```bash
+# 3. Launch Web Studio
 python app.py
 ```
-Open **`http://localhost:5000`** in your browser, or visit `http://<YOUR_LOCAL_IP>:5000` on your mobile phone connected to the same Wi-Fi.
-
-### 3. Command Line Runner (CLI Mode)
-Prefer running directly in the terminal? Run:
-```bash
-python main.py
-```
-Paste any YouTube link, choose your subtitle style, and let ClipperAI do the magic!
+Open **`http://localhost:5000`** in your browser, or visit from your mobile phone connected to the same Wi-Fi!
 
 ---
 
-## 📁 Project Architecture
+## ❓ Frequently Asked Questions (FAQ)
 
-```
-lipperai/
-├── 🌐 Web & API Engine
-│   ├── app.py                   # Flask server, REST API, & Mobile PWA interface
-│   ├── main.py                  # Interactive CLI runner
-│   └── templates/
-│       └── index.html           # Modern glassmorphism web dashboard
-│
-├── 🧠 Multi-Modal AI Pipeline
-│   ├── multimodal_engine.py     # Audio RMS energy & scene dynamic analyzer
-│   ├── sentence_snapper.py      # Complete sentence boundary algorithm
-│   ├── subtitle_engine.py       # Word-by-word bouncing ASS subtitle compiler
-│   ├── transcriber.py           # Multi-lingual transcript & timestamp extractor
-│   ├── analyzer.py              # Dialogue excitement & keyword scorer
-│   ├── downloader.py            # High-speed yt-dlp video fetcher
-│   └── cutter.py                # Accelerated FFmpeg 9:16 vertical rendering engine
-│
-├── 📱 Flutter Mobile App (mobile_app/)
-│   ├── lib/
-│   │   ├── main.dart            # Two-tab navigation & live server job monitor
-│   │   ├── database/
-│   │   │   └── db_helper.dart   # SQLite database CRUD operations
-│   │   ├── models/
-│   │   │   └── clip_item.dart   # Local clip metadata schema
-│   │   ├── screens/
-│   │   │   └── saved_clips_screen.dart # Offline saved clips viewer
-│   │   └── widgets/
-│   │       └── app_logo.dart    # Custom vector neon branding
-│   └── android/                 # Production Android configuration
-│
-└── ⚙️ CI/CD Automation
-    └── .github/workflows/
-        └── build_apk.yml        # GitHub Actions automated release pipeline
-```
+<details>
+<summary><b>1. Is ClipperAI really 100% free with no watermark?</b></summary>
+Yes! ClipperAI is completely open-source under the MIT license. There are no subscriptions, no monthly credits, no watermarks, and no hidden fees.
+</details>
+
+<details>
+<summary><b>2. How does ClipperAI compare to OpusClip, Klap, and Submagic?</b></summary>
+Paid tools like OpusClip and Klap charge up to \$99/month and process your clips on congested cloud servers. ClipperAI runs locally on your PC or Android phone, includes smart sentence boundary snapping to prevent mid-word cutoffs, and provides word-by-word bouncing captions for free.
+</details>
+
+<details>
+<summary><b>3. Do I need a powerful graphics card (GPU)?</b></summary>
+No! ClipperAI includes an ultra-fast FFmpeg CPU downscale-blur pipeline that renders 1080p 60fps vertical reels in ~10 seconds even on standard laptops and mobile CPUs.
+</details>
+
+<details>
+<summary><b>4. Does it work with non-English videos (e.g. Hindi, Spanish)?</b></summary>
+Yes! The transcript engine automatically detects Hindi (`hi`), English (`en`), and auto-generated transcripts with full multi-lingual font support.
+</details>
+
+<details>
+<summary><b>5. Can I use the Android app without turning on my computer?</b></summary>
+Yes! ClipperAI v1.0.2 features **100% On-Device Standalone Mode**. You can paste any YouTube link directly in the mobile app, preview the reels in the 9:16 player with animated captions, and store them in SQLite without needing a computer running in the background.
+</details>
 
 ---
 
-## 🎨 Subtitle Styles Showcase
+## 🏷️ Search & Topic Tags
 
-| Style | Accent Color | Animation | Recommended For |
-| :--- | :--- | :--- | :--- |
-| **Viral Yellow** | `#FFEA00` (Electric Yellow) | Word Pop Zoom (`\fscx125`) | Podcasts, Finance, Alex Hormozi style |
-| **Minimal White** | `#FFFFFF` (Pure White) | Smooth Fade & Glow | Storytelling, Documentaries, Calm discussions |
-| **Cyber Neon** | `#00F0FF` (Neon Cyan) | Glitch Pop Glow | Tech reviews, Gaming, High-energy commentary |
-
----
-
-## 🛠️ Tech Stack & Requirements
-
-- **Backend**: Python 3.10+, Flask, `yt-dlp`, `youtube-transcript-api`
-- **Processing**: FFmpeg (with `ass` and `scale` filter support)
-- **Mobile App**: Flutter 3.24+, Dart 3.5+, SQLite (`sqflite`)
-- **Cloud Build**: GitHub Actions CI/CD (Zulu OpenJDK 17 + Ubuntu Runner)
-
----
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome!
-Feel free to check [issues page](https://github.com/mindcreative134-creator/lipperai/issues).
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+`ai-video-clipper` • `opusclip-alternative` • `klap-alternative` • `submagic-alternative` • `viral-reels` • `youtube-shorts` • `auto-captions` • `hormozi-subtitles` • `video-editor` • `flutter` • `ffmpeg` • `reels-generator` • `shorts-maker` • `free-video-editor` • `speech-to-text` • `python` • `android-apk` • `video-highlights` • `sqlite` • `content-creator`
 
 ---
 
 ## 📄 License
 
-Distributed under the **MIT License**. See `LICENSE` for more information.
+Distributed under the **MIT License**. See `LICENSE` for details.
 
 <div align="center">
-  <sub>Built with ❤️ for creators, podcasters, and video editors worldwide.</sub>
+  <sub>Built with ❤️ for content creators, podcasters, and video editors worldwide.</sub>
 </div>

@@ -123,7 +123,30 @@ MOBILE_WEB_TEMPLATE = """
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Clipper AI Mobile</title>
+  <title>ClipperAI — 100% Free AI Video Clipper & Viral Reel Maker | OpusClip Alternative</title>
+  <meta name="description" content="Turn long YouTube videos into viral 9:16 Shorts & Reels with word-by-word bouncing captions (Alex Hormozi style), AI dialogue excitement detection & sentence snapping. 100% Free, No Watermark.">
+  <meta name="keywords" content="ai video clipper, opus clip alternative, viral reels generator, youtube shorts maker, alex hormozi subtitles, auto captions, tiktok editor, free video cutter, ffmpeg 9:16 blur, flutter reels app">
+  <meta name="author" content="ClipperAI Team">
+  <meta name="robots" content="index, follow">
+  
+  <!-- OpenGraph / Social Previews -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ClipperAI — Free AI Video Clipper & Viral Reel Maker">
+  <meta property="og:description" content="Auto-convert YouTube videos into 9:16 viral shorts with word-by-word bouncing subtitles and zero mid-sentence cuts. 100% Free & Open Source!">
+  <meta property="og:image" content="https://i.ytimg.com/vi/MSA6Pntsi6c/hqdefault.jpg">
+
+  <!-- Schema.org Microdata -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "ClipperAI",
+    "operatingSystem": "Android, Windows, Linux, macOS",
+    "applicationCategory": "MultimediaApplication",
+    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+    "description": "100% Free AI Video Highlight & Reel Maker."
+  }
+  </script>
   <link rel="manifest" href="/manifest.json">
   <link rel="apple-touch-icon" href="/assets/logo.png">
   <meta name="theme-color" content="#0b0f19">
