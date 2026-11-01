@@ -1,7 +1,7 @@
 name: clipper_ai_mobile
 description: "ClipperAI - Viral Reel Maker & AI Multi-Modal Video Cutter"
 publish_to: "none"
-version: 1.0.2+3
+version: 1.0.3+4
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -13,6 +13,7 @@ dependencies:
   sqflite: ^2.3.2
   path: ^1.9.0
   url_launcher: ^6.2.4
+  video_player: ^2.9.2
 
 dev_dependencies:
   flutter_test:

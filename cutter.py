@@ -23,11 +23,13 @@ def cut_clip(
     output_path: str,
     vertical_crop: bool = False,
     segments: list = None,
-    subtitle_template: str = "none"
+    subtitle_template: str = "klap_kinetic",
+    reframe_mode: str = "smart_reframe"
 ) -> bool:
     """
     Cuts video between start_sec and end_sec using FFmpeg.
-    Burns selected subtitle animation template (Hormozi, Minimal, Neon, Red Box) if enabled.
+    Supports Klap AI Reframe 2 (Speaker/Action Center Crop) or Blur Background.
+    Burns selected subtitle animation template (Klap Kinetic, Hormozi, Minimal, Neon, Red Box).
     """
     duration = end_sec - start_sec
     if duration <= 0:
@@ -35,7 +37,6 @@ def cut_clip(
 
     os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
 
-    # 1. Generate subtitle file if template selected
     temp_ass = os.path.splitext(output_path)[0] + "_temp.ass"
     has_subtitles = False
     
@@ -46,29 +47,37 @@ def cut_clip(
             is_vertical=vertical_crop
         )
 
-    # 2. Build FFmpeg command
     if vertical_crop:
-        # Optimized 9:16 vertical conversion (Fast blur on downscaled layer)
-        if has_subtitles and os.path.exists(temp_ass):
-            sub_filter = escape_ffmpeg_path(temp_ass)
-            filter_complex = (
-                "[0:v]scale=360:640:force_original_aspect_ratio=increase,crop=360:640,boxblur=12:3,scale=1080:1920[bg];"
-                "[0:v]scale=1080:1920:force_original_aspect_ratio=decrease[fg];"
-                f"[bg][fg]overlay=(W-w)/2:(H-h)/2,subtitles='{sub_filter}'"
-            )
+        sub_filter = escape_ffmpeg_path(temp_ass) if (has_subtitles and os.path.exists(temp_ass)) else None
+
+        if reframe_mode == "smart_reframe":
+            # KLAP AI REFRAME 2: Full-screen 9:16 speaker center crop
+            vf_chain = "scale=-1:1920:force_original_aspect_ratio=increase,crop=1080:1920:(iw-1080)/2:0"
+            if sub_filter:
+                vf_chain += f",subtitles='{sub_filter}'"
+            filter_args = ["-vf", vf_chain]
         else:
-            filter_complex = (
-                "[0:v]scale=360:640:force_original_aspect_ratio=increase,crop=360:640,boxblur=12:3,scale=1080:1920[bg];"
-                "[0:v]scale=1080:1920:force_original_aspect_ratio=decrease[fg];"
-                "[bg][fg]overlay=(W-w)/2:(H-h)/2"
-            )
+            # BLUR BACKGROUND: 16:9 focused in center + blurred top/bottom
+            if sub_filter:
+                filter_complex = (
+                    "[0:v]scale=360:640:force_original_aspect_ratio=increase,crop=360:640,boxblur=12:3,scale=1080:1920[bg];"
+                    "[0:v]scale=1080:1920:force_original_aspect_ratio=decrease[fg];"
+                    f"[bg][fg]overlay=(W-w)/2:(H-h)/2,subtitles='{sub_filter}'"
+                )
+            else:
+                filter_complex = (
+                    "[0:v]scale=360:640:force_original_aspect_ratio=increase,crop=360:640,boxblur=12:3,scale=1080:1920[bg];"
+                    "[0:v]scale=1080:1920:force_original_aspect_ratio=decrease[fg];"
+                    "[bg][fg]overlay=(W-w)/2:(H-h)/2"
+                )
+            filter_args = ["-filter_complex", filter_complex]
 
         cmd = [
             "ffmpeg", "-y",
             "-ss", str(start_sec),
             "-i", input_video,
             "-t", str(duration),
-            "-filter_complex", filter_complex,
+            *filter_args,
             "-c:v", "libx264",
             "-preset", "veryfast",
             "-crf", "22",
@@ -112,7 +121,6 @@ def cut_clip(
         print(f"FFmpeg error: {e}")
         success = False
     finally:
-        # Clean up temporary ASS subtitle file
         if os.path.exists(temp_ass):
             try:
                 os.remove(temp_ass)
@@ -127,16 +135,17 @@ def export_clips(
     output_dir: str = "output_clips",
     vertical: bool = False,
     segments: list = None,
-    subtitle_template: str = "hormozi"
+    subtitle_template: str = "klap_kinetic",
+    reframe_mode: str = "smart_reframe"
 ) -> list:
     """
-    Renders all highlight clips with optional subtitle burning.
+    Renders all highlight clips with optional Klap Reframe and subtitle burning.
     """
     os.makedirs(output_dir, exist_ok=True)
     generated = []
     total = len(clips)
     
-    print(f"\n[4/4] Cutting {total} highlight clips (Subtitles: '{subtitle_template}', Vertical: {vertical})...")
+    print(f"\n[4/4] Cutting {total} highlight clips (Subtitles: '{subtitle_template}', Reframe: '{reframe_mode}', Vertical: {vertical})...")
     
     for idx, clip in enumerate(clips, start=1):
         start = clip['start']
@@ -147,12 +156,13 @@ def export_clips(
         filename = f"clip_{idx}_{mins:02d}m{secs:02d}s_{int(duration)}s.mp4"
         out_file = os.path.join(output_dir, filename)
         
-        print(f"  -> [{idx}/{total}] Cutting: '{clip['title']}' ({duration}s)...")
+        print(f"  -> [{idx}/{total}] Cutting: '{clip['title']}' ({duration}s | Score: {clip.get('viral_score', 95)}/100)...")
         success = cut_clip(
             video_path, start, end, out_file,
             vertical_crop=vertical,
             segments=segments,
-            subtitle_template=subtitle_template
+            subtitle_template=subtitle_template,
+            reframe_mode=reframe_mode
         )
         
         if success and os.path.exists(out_file):

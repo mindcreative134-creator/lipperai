@@ -18,10 +18,10 @@
 
 <br/>
 
-<a href="https://github.com/mindcreative134-creator/lipperai/releases/latest">
-  <img src="https://img.shields.io/badge/📲_DOWNLOAD_ANDROID_APK-v1.0.2-success?style=for-the-badge&logo=android" alt="Download APK" height="44">
+<a href="https://github.com/mindcreative134-creator/lipperai/releases/download/v1.0.3/ClipperAI-v1.0.3.apk">
+  <img src="https://img.shields.io/badge/📲_DOWNLOAD_ANDROID_APK-v1.0.3-success?style=for-the-badge&logo=android" alt="Download APK" height="44">
 </a>
-<a href="https://clipperai-reels.loca.lt">
+<a href="https://latin-entrepreneur-reproduce-biology.trycloudflare.com">
   <img src="https://img.shields.io/badge/🌐_OPEN_ONLINE_CLOUD_STUDIO-FREE-blueviolet?style=for-the-badge&logo=google-chrome" alt="Web Studio" height="44">
 </a>
 
@@ -42,10 +42,12 @@
 
 | Capability | ✨ ClipperAI (Free & Open Source) | ❌ OpusClip | ❌ Klap.app | ❌ Submagic |
 | :--- | :---: | :---: | :---: | :---: |
-| **Price** | **100% Free Forever** | \$29 – \$99/month | \$29/month | \$20 – \$50/month |
+| **Price** | **100% Free Forever** | \$29 – \$99/month | \$29 – \$189/mo | \$20 – \$50/month |
+| **AI Viral Score** | ✅ **Klap AI Score (0-100) + Hook Reasons** | ❌ Generic virality score | Paid tier only | ❌ None |
+| **AI Reframe 2** | ✅ **Speaker Center Crop + Blur Frame** | ❌ Fixed crop | Paid tier only | ❌ Manual reframe |
+| **Kinetic Captions** | ✅ **Electric Yellow Pop + Auto Emojis** | Paid add-on | Paid tier only | Limited styles |
 | **Watermark** | **Zero Watermark** | Watermarked (Free tier) | Watermarked | Watermarked |
 | **Sentence Snapper** | ✅ **Zero mid-sentence cuts** | ❌ Cuts randomly at timer | ❌ Frequent cutoffs | ❌ Fixed cutoffs |
-| **Word Pop Subtitles** | ✅ **Alex Hormozi Yellow Pop** | Paid add-on | Paid tier only | Limited styles |
 | **Mobile App** | ✅ **Native Android APK + SQLite** | ❌ Web-only | ❌ Web-only | ❌ Web-only |
 | **Offline Privacy** | ✅ **Runs locally on your device** | ❌ Uploads to 3rd party | ❌ Cloud only | ❌ Cloud only |
 | **Export Quality** | **Full HD 1080p / 60fps** | Limited on Free | Limited on Free | Limited on Free |

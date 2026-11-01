@@ -21,8 +21,9 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _createDB,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -39,9 +40,22 @@ class DatabaseHelper {
         download_url TEXT NOT NULL,
         subtitle_style TEXT NOT NULL,
         reason TEXT,
+        viral_score INTEGER DEFAULT 95,
+        viral_label TEXT DEFAULT 'Viral Sensation 🔥',
+        hook_reason TEXT,
         created_at INTEGER NOT NULL
       )
     ''');
+  }
+
+  Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      try {
+        await db.execute("ALTER TABLE clips ADD COLUMN viral_score INTEGER DEFAULT 95");
+        await db.execute("ALTER TABLE clips ADD COLUMN viral_label TEXT DEFAULT 'Viral Sensation 🔥'");
+        await db.execute("ALTER TABLE clips ADD COLUMN hook_reason TEXT");
+      } catch (_) {}
+    }
   }
 
   Future<int> insertClip(ClipItem clip) async {
@@ -70,4 +84,3 @@ class DatabaseHelper {
     db.close();
   }
 }
-

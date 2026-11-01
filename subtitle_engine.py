@@ -10,14 +10,48 @@ def format_ass_time(seconds: float) -> str:
     centis = int((secs - int(secs)) * 100)
     return f"{int(hours)}:{int(mins):02d}:{int(secs):02d}.{centis:02d}"
 
+# Klap EMOJI MAP for viral kinetic words
+VIRAL_EMOJIS = {
+    "money": "💰", "cash": "💵", "rich": "🤑", "paisa": "💰",
+    "crazy": "🤯", "shock": "😱", "shocking": "😱", "insane": "🤯", "unbelievable": "🤯",
+    "fire": "🔥", "hot": "🔥", "viral": "🚀", "trend": "📈",
+    "secret": "🤫", "hack": "🔑", "trick": "✨", "sach": "🔍",
+    "laugh": "😂", "funny": "😂", "joke": "🤣", "lol": "😂",
+    "stop": "🛑", "wait": "⏳", "listen": "👂", "suno": "👂", "dekho": "👀",
+    "win": "🏆", "best": "🥇", "top": "⭐", "1": "👑",
+    "danger": "⚠️", "warning": "⚠️", "bad": "💀", "galti": "❌",
+    "love": "❤️", "ai": "🤖", "bot": "🤖", "game": "🎮"
+}
+
+def enrich_word_with_emoji(word: str) -> str:
+    """Appends an emoji to viral trigger words like Klap.app does."""
+    clean_w = re.sub(r'[^\w]', '', word.lower())
+    if clean_w in VIRAL_EMOJIS:
+        return f"{word} {VIRAL_EMOJIS[clean_w]}"
+    return word
+
 SUBTITLE_STYLES = {
+    "klap_kinetic": {
+        "name": "Klap Kinetic (Yellow Pop + Auto Emojis)",
+        "fontname": "Impact",
+        "fontsize": 46,
+        "primary_colour": "&H0015CCFA&",  # Klap Electric Yellow (#FACC15 in AABBGGRR)
+        "inactive_colour": "&H00FFFFFF&", # Clean White
+        "outline_colour": "&H00000000&",  # Heavy Black Border
+        "back_colour": "&H80000000&",
+        "bold": 1,
+        "outline": 5.0,
+        "shadow": 2.5,
+        "border_style": 1,
+        "alignment": 2
+    },
     "hormozi": {
         "name": "Viral Hormozi (Word Pop & Yellow Highlight)",
         "fontname": "Impact",
         "fontsize": 44,
-        "primary_colour": "&H0000FFFF&",  # Active word Yellow (AABBGGRR)
-        "inactive_colour": "&H00FFFFFF&", # Inactive word White
-        "outline_colour": "&H00000000&",  # Thick Black Border
+        "primary_colour": "&H0000FFFF&",  # Yellow
+        "inactive_colour": "&H00FFFFFF&", # White
+        "outline_colour": "&H00000000&",
         "back_colour": "&H80000000&",
         "bold": 1,
         "outline": 4.5,
@@ -45,7 +79,7 @@ SUBTITLE_STYLES = {
         "fontsize": 42,
         "primary_colour": "&H00FFFF00&",  # Cyan
         "inactive_colour": "&H00FFFFFF&",
-        "outline_colour": "&H00FF00FF&",  # Magenta glow
+        "outline_colour": "&H00FF00FF&",
         "back_colour": "&H80000000&",
         "bold": 1,
         "outline": 4.0,
@@ -59,12 +93,12 @@ SUBTITLE_STYLES = {
         "fontsize": 36,
         "primary_colour": "&H00FFFFFF&",
         "inactive_colour": "&H00DDDDDD&",
-        "outline_colour": "&H000000CC&",  # Red box
-        "back_colour": "&H000000CC&",     # Red box
+        "outline_colour": "&H000000CC&",
+        "back_colour": "&H000000CC&",
         "bold": 1,
         "outline": 3.0,
         "shadow": 0.0,
-        "border_style": 3,                # Opaque box
+        "border_style": 3,
         "alignment": 2
     }
 }
@@ -89,7 +123,7 @@ def split_segment_into_words(seg: dict) -> list:
     for w in words:
         weight = max(1, len(w)) / total_chars
         w_dur = seg_dur * weight
-        w_dur = max(0.2, min(w_dur, 1.2))  # Keep natural speech bounds
+        w_dur = max(0.2, min(w_dur, 1.2))
         
         word_items.append({
             'word': w,
@@ -105,23 +139,24 @@ def generate_ass_subtitles(
     clip_start: float,
     clip_end: float,
     output_ass_path: str,
-    template_key: str = "hormozi",
+    template_key: str = "klap_kinetic",
     is_vertical: bool = True
 ) -> bool:
     """
     Generates ASS subtitles with:
       1. Word-by-word animation (voice synchronized).
-      2. 2-3 word dynamic bursts (like CapCut & Opus Clip).
-      3. Hormozi bouncing pop effect + Active word highlight.
+      2. 2-3 word dynamic bursts (like Klap & Opus Clip).
+      3. Klap kinetic bouncing pop effect + Active word highlight + Emojis.
     """
-    if template_key == "none" or template_key not in SUBTITLE_STYLES:
+    if template_key == "none":
         return False
+    if template_key not in SUBTITLE_STYLES:
+        template_key = "klap_kinetic"
 
     style = SUBTITLE_STYLES[template_key]
     fontsize = style['fontsize'] + (10 if is_vertical else 0)
     play_res_y = 1920 if is_vertical else 1080
     play_res_x = 1080 if is_vertical else 1920
-    # Safe margin for TikTok / Reels: place in lower center (above bottom buttons)
     margin_v = 450 if is_vertical else 100
 
     header = f"""[Script Info]
@@ -139,14 +174,12 @@ Style: Inactive,{style['fontname']},{fontsize},{style['inactive_colour']},{style
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 """
 
-    # 1. Gather all words inside the clip window
     all_words = []
     for seg in segments:
         if seg['end'] <= clip_start or seg['start'] >= clip_end:
             continue
         all_words.extend(split_segment_into_words(seg))
 
-    # Filter to words strictly within the clip boundary
     clip_words = [
         w for w in all_words 
         if w['end'] > clip_start and w['start'] < clip_end
@@ -155,7 +188,6 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     if not clip_words:
         return False
 
-    # 2. Group words into punchy 2-3 word chunks (The Viral Reel Pattern)
     dialogues = []
     chunk_size = 3 if is_vertical else 4
     
@@ -170,7 +202,6 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         if chunk_end <= chunk_start:
             continue
 
-        # In this chunk, animate each word as it is spoken!
         for active_idx, active_word in enumerate(chunk):
             w_start = max(0.0, active_word['start'] - clip_start)
             w_end = min(clip_end - clip_start, active_word['end'] - clip_start)
@@ -178,20 +209,21 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             if w_end <= w_start:
                 continue
 
-            # Build line: active word is highlighted with POP effect!
             line_parts = []
             for idx, w in enumerate(chunk):
                 word_text = w['word'].replace('{', '').replace('}', '').strip()
-                if template_key == "hormozi":
+                if template_key in ["hormozi", "klap_kinetic"]:
                     word_text = word_text.upper()
 
                 if idx == active_idx:
-                    # ACTIVE WORD: Bouncing pop animation + Highlight color!
-                    # \\t(0,80,\\fscx100\\fscy100) bounces down from 125% scale to 100%
-                    pop_tag = r"{\rDefault\fscx125\fscy125\t(0,90,\fscx100\fscy100)\c" + style['primary_colour'] + r"}"
+                    # Enriched with viral emoji if matching keyword
+                    if template_key == "klap_kinetic":
+                        word_text = enrich_word_with_emoji(word_text)
+
+                    # Klap bouncing pop: scale 130% down to 100% in 90ms
+                    pop_tag = r"{\rDefault\fscx130\fscy130\t(0,90,\fscx100\fscy100)\c" + style['primary_colour'] + r"}"
                     line_parts.append(f"{pop_tag}{word_text}")
                 else:
-                    # Inactive word in chunk: Dimmed white
                     dim_tag = r"{\rInactive\c" + style['inactive_colour'] + r"}"
                     line_parts.append(f"{dim_tag}{word_text}")
 

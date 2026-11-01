@@ -37,33 +37,34 @@ jobs:
       - name: Prepare APK for Release
         run: |
           mkdir -p release_output
-          cp mobile_app/build/app/outputs/flutter-apk/app-release.apk release_output/ClipperAI-v1.0.2.apk
+          cp mobile_app/build/app/outputs/flutter-apk/app-release.apk release_output/ClipperAI-v1.0.3.apk
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ClipperAI-Release-APK
-          path: release_output/ClipperAI-v1.0.2.apk
+          path: release_output/ClipperAI-v1.0.3.apk
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.2
-          name: ClipperAI v1.0.2 (Stitch UI/UX & Fast Clip Release)
+          tag_name: v1.0.3
+          name: ClipperAI v1.0.3 (Klap.app Viral Score, Smart Reframe 2 & Kinetic Subtitles)
           draft: false
           prerelease: false
           body: |
-            ## 🎨 ClipperAI v1.0.2 - Stitch UI/UX Redesign & High-Speed Clipping
+            ## 🚀 ClipperAI v1.0.3 - Full Klap.app AI Replication (100% Free & Open-Source)
 
-            ### 🚀 What's New:
-            - **✨ StitchMCP Cyber-Dark UI/UX**: Re-engineered with modern Stitch design palette (Deep Slate `#0F1117`, Electric Yellow `#FACC15`, Neon Cyan `#06B6D4`).
-            - **📋 One-Tap URL Paste**: Quick clipboard paste button built directly into the input bar.
-            - **⚡ Fast-Engine Video Pipeline**: Resolved video download bottleneck (switched to 720p 60fps high-throughput stream with android/web client fallback).
-            - **🌐 Smart Cloud / On-Device Dual Fallback**: Automatically connects to cloud backend, and seamlessly falls back to 100% on-device mode if offline with ZERO crashes.
-            - **🎬 9:16 Viral Reel Player**: Word-by-word animated bouncing subtitles with direct YouTube timestamp opening.
+            ### 🔥 What's New:
+            - **🧠 Klap AI Viral Score (0-100)**: Evaluates opening 15s hook, dialogue velocity (words/sec), and sound energy to rank clips (e.g. `98/100 Viral Sensation 🔥`).
+            - **🎯 AI Reframe 2 (Speaker Center Crop)**: 9:16 vertical crop locked directly onto active speaker rather than blurry letterboxes.
+            - **⚡ Kinetic Captions + Auto-Emojis**: Electric Yellow `#FACC15` pop with automatic context emojis (💰, 🤯, 🔥, 🤫, 😂, 🛑, 🏆, ❤️).
+            - **🎥 Real Video Player Integration**: Powered by Flutter's official `video_player` with stream playback, loop, scrubber, and direct YouTube app deep-linking.
+            - **📱 100% On-Device / Cloud Studio Switcher**: Run completely offline without any backend server ("⚡ 100% On-Device"), or connect seamlessly to Cloud AI Studio.
+            - **🛠️ Fixed AndroidManifest XML Error**: Fixed unescaped character issue that interrupted earlier build runs.
 
-            ### 📲 Download:
-            Download **`ClipperAI-v1.0.2.apk`** below to install!
-          files: release_output/ClipperAI-v1.0.2.apk
+            ### 📲 Direct Download:
+            Download **`ClipperAI-v1.0.3.apk`** below to install!
+          files: release_output/ClipperAI-v1.0.3.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

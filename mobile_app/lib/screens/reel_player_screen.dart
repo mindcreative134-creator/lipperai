@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:video_player/video_player.dart';
 import '../models/clip_item.dart';
 
 class ReelPlayerScreen extends StatefulWidget {
@@ -21,38 +22,106 @@ class _ReelPlayerScreenState extends State<ReelPlayerScreen> with SingleTickerPr
   bool _isPlaying = true;
   int _activeWordIndex = 0;
 
+  VideoPlayerController? _videoPlayerController;
+  bool _isVideoInitialized = false;
+  bool _hasVideoError = false;
+
   late List<String> _sampleWords;
+
+  // Klap emoji dictionary
+  final Map<String, String> _emojiMap = {
+    "money": "💰", "cash": "💵", "rich": "🤑", "paisa": "💰",
+    "crazy": "🤯", "shock": "😱", "shocking": "😱", "insane": "🤯",
+    "fire": "🔥", "viral": "🚀", "secret": "🤫", "hack": "🔑",
+    "laugh": "😂", "funny": "😂", "joke": "🤣", "stop": "🛑",
+    "win": "🏆", "best": "🥇", "love": "❤️", "ai": "🤖"
+  };
 
   @override
   void initState() {
     super.initState();
     _pulseController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 220),
+      duration: const Duration(milliseconds: 200),
       lowerBound: 1.0,
-      upperBound: 1.25,
+      upperBound: 1.30,
     );
 
-    // Dialogue words for the animated captions
     final dialogue = widget.clip.reason.isNotEmpty
         ? widget.clip.reason
         : "WAIT FOR IT... THIS IS THE CRAZIEST PART OF THE ENTIRE VIDEO!";
-    _sampleWords = dialogue.replaceAll(RegExp(r'[^\w\s\u0900-\u097F]'), '').split(' ');
+    final rawWords = dialogue.replaceAll(RegExp(r'[^\w\s\u0900-\u097F]'), '').split(' ');
+    
+    // Add emojis to key words
+    _sampleWords = rawWords.map((w) {
+      final clean = w.toLowerCase().trim();
+      if (_emojiMap.containsKey(clean)) {
+        return "$w ${_emojiMap[clean]}";
+      }
+      return w;
+    }).toList();
+
     if (_sampleWords.isEmpty) {
-      _sampleWords = ["WAIT", "FOR", "IT", "VIRAL", "REEL", "MOMENT"];
+      _sampleWords = ["WAIT", "FOR ⏳", "IT 🔥", "VIRAL 🚀", "REEL", "MOMENT 🤯"];
     }
 
-    _startPlayback();
+    _initializeVideoIfPossible();
+    _startSubtitleTicker();
   }
 
-  void _startPlayback() {
+  void _initializeVideoIfPossible() {
+    final streamUrl = widget.clip.streamUrl.trim();
+    final isDirectVideo = streamUrl.endsWith(".mp4") ||
+        streamUrl.contains("/stream/") ||
+        streamUrl.contains("googlevideo.com") ||
+        streamUrl.contains(".m3u8");
+
+    if (isDirectVideo) {
+      try {
+        _videoPlayerController = VideoPlayerController.networkUrl(
+          Uri.parse(streamUrl),
+          httpHeaders: {"Bypass-Tunnel-Reminder": "true"},
+        )..initialize().then((_) {
+            if (mounted) {
+              setState(() {
+                _isVideoInitialized = true;
+              });
+              _videoPlayerController!.setLooping(true);
+              _videoPlayerController!.play();
+            }
+          }).catchError((err) {
+            if (mounted) {
+              setState(() {
+                _hasVideoError = true;
+              });
+            }
+          });
+
+        _videoPlayerController?.addListener(() {
+          if (mounted && _videoPlayerController != null && _videoPlayerController!.value.isInitialized) {
+            setState(() {
+              _currentSeconds = _videoPlayerController!.value.position.inMilliseconds / 1000.0;
+              _isPlaying = _videoPlayerController!.value.isPlaying;
+            });
+          }
+        });
+      } catch (e) {
+        _hasVideoError = true;
+      }
+    }
+  }
+
+  void _startSubtitleTicker() {
     _playbackTimer?.cancel();
-    _playbackTimer = Timer.periodic(const Duration(milliseconds: 350), (timer) {
+    _playbackTimer = Timer.periodic(const Duration(milliseconds: 340), (timer) {
       if (!_isPlaying) return;
+      if (!mounted) return;
       setState(() {
-        _currentSeconds += 0.35;
-        if (_currentSeconds >= widget.clip.duration && widget.clip.duration > 0) {
-          _currentSeconds = 0.0;
+        if (!_isVideoInitialized) {
+          _currentSeconds += 0.34;
+          if (_currentSeconds >= widget.clip.duration && widget.clip.duration > 0) {
+            _currentSeconds = 0.0;
+          }
         }
         _activeWordIndex = (_activeWordIndex + 1) % _sampleWords.length;
         _pulseController.forward(from: 1.0);
@@ -61,20 +130,44 @@ class _ReelPlayerScreenState extends State<ReelPlayerScreen> with SingleTickerPr
   }
 
   void _togglePlayPause() {
-    setState(() {
-      _isPlaying = !_isPlaying;
-    });
+    if (_videoPlayerController != null && _videoPlayerController!.value.isInitialized) {
+      setState(() {
+        if (_videoPlayerController!.value.isPlaying) {
+          _videoPlayerController!.pause();
+          _isPlaying = false;
+        } else {
+          _videoPlayerController!.play();
+          _isPlaying = true;
+        }
+      });
+    } else {
+      setState(() {
+        _isPlaying = !_isPlaying;
+      });
+    }
   }
 
   Future<void> _openYouTubeAtTimestamp() async {
     final vId = widget.videoId ?? _extractVideoId(widget.clip.streamUrl);
     final startSec = widget.clip.start.toInt();
-    final url = (vId.isNotEmpty)
+    
+    // First try native YouTube app intent
+    if (vId.isNotEmpty) {
+      final appUri = Uri.parse("vnd.youtube:$vId?t=${startSec}s");
+      try {
+        if (await canLaunchUrl(appUri)) {
+          await launchUrl(appUri);
+          return;
+        }
+      } catch (_) {}
+    }
+
+    final webUrl = (vId.isNotEmpty)
         ? "https://www.youtube.com/watch?v=$vId&t=${startSec}s"
         : widget.clip.streamUrl;
 
-    if (url.isNotEmpty) {
-      final uri = Uri.parse(url);
+    if (webUrl.isNotEmpty) {
+      final uri = Uri.parse(webUrl);
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       }
@@ -82,7 +175,7 @@ class _ReelPlayerScreenState extends State<ReelPlayerScreen> with SingleTickerPr
   }
 
   String _extractVideoId(String url) {
-    final reg = RegExp(r'(?:v=|\/)([0-9A-Za-z_-]{11}).*');
+    final reg = RegExp(r'(?:v=|\/|youtu\.be\/|shorts\/)([0-9A-Za-z_-]{11})');
     final match = reg.firstMatch(url);
     return match?.group(1) ?? "";
   }
@@ -91,6 +184,7 @@ class _ReelPlayerScreenState extends State<ReelPlayerScreen> with SingleTickerPr
   void dispose() {
     _playbackTimer?.cancel();
     _pulseController.dispose();
+    _videoPlayerController?.dispose();
     super.dispose();
   }
 
@@ -115,7 +209,7 @@ class _ReelPlayerScreenState extends State<ReelPlayerScreen> with SingleTickerPr
           ),
           Positioned.fill(
             child: Container(
-              color: Colors.black.withOpacity(0.65),
+              color: Colors.black.withOpacity(0.72),
             ),
           ),
 
@@ -127,12 +221,12 @@ class _ReelPlayerScreenState extends State<ReelPlayerScreen> with SingleTickerPr
                 onTap: _togglePlayPause,
                 child: Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: const Color(0xFF6366F1).withOpacity(0.5), width: 1.5),
-                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: const Color(0xFFFACC15).withOpacity(0.6), width: 1.5),
+                    borderRadius: BorderRadius.circular(22),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF6366F1).withOpacity(0.25),
-                        blurRadius: 25,
+                        color: const Color(0xFFFACC15).withOpacity(0.2),
+                        blurRadius: 28,
                         spreadRadius: 2,
                       )
                     ],
@@ -140,16 +234,28 @@ class _ReelPlayerScreenState extends State<ReelPlayerScreen> with SingleTickerPr
                   clipBehavior: Clip.antiAlias,
                   child: Stack(
                     children: [
-                      // Video Thumbnail in center
-                      Positioned.fill(
-                        child: Image.network(
-                          thumbUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const Center(
-                            child: Icon(Icons.movie, size: 80, color: Colors.white24),
+                      // Video Player (If MP4 stream initialized) or Thumbnail
+                      if (_isVideoInitialized && _videoPlayerController != null)
+                        Positioned.fill(
+                          child: FittedBox(
+                            fit: BoxFit.cover,
+                            child: SizedBox(
+                              width: _videoPlayerController!.value.size.width,
+                              height: _videoPlayerController!.value.size.height,
+                              child: VideoPlayer(_videoPlayerController!),
+                            ),
+                          ),
+                        )
+                      else
+                        Positioned.fill(
+                          child: Image.network(
+                            thumbUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => const Center(
+                              child: Icon(Icons.movie, size: 80, color: Colors.white24),
+                            ),
                           ),
                         ),
-                      ),
 
                       // Gradient Overlay top & bottom
                       Positioned.fill(
@@ -159,13 +265,41 @@ class _ReelPlayerScreenState extends State<ReelPlayerScreen> with SingleTickerPr
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [
-                                Colors.black.withOpacity(0.7),
+                                Colors.black.withOpacity(0.70),
                                 Colors.transparent,
                                 Colors.transparent,
-                                Colors.black.withOpacity(0.85),
+                                Colors.black.withOpacity(0.90),
                               ],
-                              stops: const [0.0, 0.2, 0.7, 1.0],
+                              stops: const [0.0, 0.20, 0.65, 1.0],
                             ),
+                          ),
+                        ),
+                      ),
+
+                      // TOP HUD: KLAP VIRAL SCORE METER
+                      Positioned(
+                        top: 16,
+                        right: 16,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.75),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: const Color(0xFF10B981), width: 1.5),
+                            boxShadow: [
+                              BoxShadow(color: const Color(0xFF10B981).withOpacity(0.3), blurRadius: 10)
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.local_fire_department, color: Color(0xFFFACC15), size: 16),
+                              const SizedBox(width: 4),
+                              Text(
+                                "${widget.clip.viralScore}/100",
+                                style: const TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.bold, fontSize: 13),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -176,20 +310,21 @@ class _ReelPlayerScreenState extends State<ReelPlayerScreen> with SingleTickerPr
                           child: Container(
                             padding: const EdgeInsets.all(18),
                             decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.6),
+                              color: Colors.black.withOpacity(0.65),
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(Icons.play_arrow, size: 48, color: Colors.white),
                           ),
                         ),
 
-                      // LIVE WORD-BY-WORD ANIMATED SUBTITLES
-                      Positioned(
-                        bottom: 120,
-                        left: 20,
-                        right: 20,
-                        child: _buildAnimatedSubtitleWidget(),
-                      ),
+                      // LIVE KLAP KINETIC ANIMATED SUBTITLES (Shown when video doesn't already have burned-in subs)
+                      if (!_isVideoInitialized)
+                        Positioned(
+                          bottom: 125,
+                          left: 18,
+                          right: 18,
+                          child: _buildAnimatedSubtitleWidget(),
+                        ),
 
                       // Bottom Info Bar inside Reel
                       Positioned(
@@ -204,7 +339,7 @@ class _ReelPlayerScreenState extends State<ReelPlayerScreen> with SingleTickerPr
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                                fontSize: 15,
                                 shadows: [Shadow(color: Colors.black, blurRadius: 4)],
                               ),
                               maxLines: 2,
@@ -216,18 +351,21 @@ class _ReelPlayerScreenState extends State<ReelPlayerScreen> with SingleTickerPr
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF6366F1),
+                                    color: const Color(0xFFFACC15),
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Text(
                                     "${widget.clip.duration.toInt()}s Reel",
-                                    style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                                    style: const TextStyle(color: Color(0xFF0F1117), fontSize: 11, fontWeight: FontWeight.bold),
                                   ),
                                 ),
                                 const SizedBox(width: 8),
-                                Text(
-                                  "Start: ${widget.clip.start.toInt()}s • Style: ${widget.clip.subtitleStyle}",
-                                  style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 12),
+                                Expanded(
+                                  child: Text(
+                                    widget.clip.viralLabel,
+                                    style: const TextStyle(color: Colors.white70, fontSize: 12),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                               ],
                             ),
@@ -238,7 +376,7 @@ class _ReelPlayerScreenState extends State<ReelPlayerScreen> with SingleTickerPr
                                   ? (_currentSeconds / widget.clip.duration).clamp(0.0, 1.0)
                                   : 0.5,
                               backgroundColor: Colors.white24,
-                              valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF6366F1)),
+                              valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFFACC15)),
                               minHeight: 4,
                             ),
                           ],
@@ -264,7 +402,7 @@ class _ReelPlayerScreenState extends State<ReelPlayerScreen> with SingleTickerPr
                   onPressed: () => Navigator.pop(context),
                 ),
                 const Text(
-                  "9:16 Viral Reel Player",
+                  "Klap AI Reel Player",
                   style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 IconButton(
@@ -292,11 +430,11 @@ class _ReelPlayerScreenState extends State<ReelPlayerScreen> with SingleTickerPr
                 onPressed: _openYouTubeAtTimestamp,
                 icon: const Icon(Icons.play_circle_fill, color: Colors.white, size: 24),
                 label: Text(
-                  "Open on YouTube (${widget.clip.start.toInt()}s)",
+                  "Watch on YouTube (${widget.clip.start.toInt()}s)",
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
+                  backgroundColor: const Color(0xFFFF0000),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                   elevation: 8,
                 ),
@@ -311,38 +449,30 @@ class _ReelPlayerScreenState extends State<ReelPlayerScreen> with SingleTickerPr
   Widget _buildAnimatedSubtitleWidget() {
     final style = widget.clip.subtitleStyle.toLowerCase();
 
-    // Show 3 words at a time: previous, active, next
     final prevWord = _activeWordIndex > 0 ? _sampleWords[_activeWordIndex - 1] : "";
     final currentWord = _sampleWords[_activeWordIndex];
     final nextWord = _activeWordIndex + 1 < _sampleWords.length ? _sampleWords[_activeWordIndex + 1] : "";
 
-    Color activeColor;
+    Color activeColor = const Color(0xFFFACC15); // Klap / Hormozi Yellow
     Color boxColor = Colors.transparent;
-    double fontSize = 24.0;
-    FontWeight fontWeight = FontWeight.w900;
+    double fontSize = 23.0;
 
-    if (style.contains("hormozi")) {
-      // Alex Hormozi Vibrant Yellow
-      activeColor = const Color(0xFFFFEB3B);
-    } else if (style.contains("neon") || style.contains("cyan")) {
-      // Cyber Neon Cyan
+    if (style.contains("neon") || style.contains("cyan")) {
       activeColor = const Color(0xFF00E5FF);
+    } else if (style.contains("clean") || style.contains("white")) {
+      activeColor = Colors.white;
     } else if (style.contains("box") || style.contains("red")) {
-      // Breaking Box Red
       activeColor = Colors.white;
       boxColor = Colors.redAccent.withOpacity(0.9);
-    } else {
-      // Clean White
-      activeColor = Colors.white;
     }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: boxColor != Colors.transparent ? boxColor : Colors.black.withOpacity(0.55),
-        borderRadius: BorderRadius.circular(12),
+        color: boxColor != Colors.transparent ? boxColor : Colors.black.withOpacity(0.60),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: activeColor.withOpacity(0.4),
+          color: activeColor.withOpacity(0.45),
           width: 1.5,
         ),
       ),
@@ -357,7 +487,7 @@ class _ReelPlayerScreenState extends State<ReelPlayerScreen> with SingleTickerPr
                 prevWord.toUpperCase(),
                 style: const TextStyle(
                   color: Colors.white70,
-                  fontSize: 18,
+                  fontSize: 17,
                   fontWeight: FontWeight.bold,
                   shadows: [Shadow(color: Colors.black, blurRadius: 4)],
                 ),
@@ -369,9 +499,9 @@ class _ReelPlayerScreenState extends State<ReelPlayerScreen> with SingleTickerPr
                 style: TextStyle(
                   color: activeColor,
                   fontSize: fontSize,
-                  fontWeight: fontWeight,
+                  fontWeight: FontWeight.w900,
                   shadows: [
-                    Shadow(color: activeColor.withOpacity(0.6), blurRadius: 10),
+                    Shadow(color: activeColor.withOpacity(0.6), blurRadius: 12),
                     const Shadow(color: Colors.black, blurRadius: 6),
                   ],
                 ),
@@ -382,7 +512,7 @@ class _ReelPlayerScreenState extends State<ReelPlayerScreen> with SingleTickerPr
                 nextWord.toUpperCase(),
                 style: const TextStyle(
                   color: Colors.white70,
-                  fontSize: 18,
+                  fontSize: 17,
                   fontWeight: FontWeight.bold,
                   shadows: [Shadow(color: Colors.black, blurRadius: 4)],
                 ),
@@ -393,4 +523,3 @@ class _ReelPlayerScreenState extends State<ReelPlayerScreen> with SingleTickerPr
     );
   }
 }
-

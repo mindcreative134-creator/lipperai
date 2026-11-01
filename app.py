@@ -34,7 +34,8 @@ def process_job_background(job_id: str, data: dict):
     mode = data.get('mode', 'auto')
     search_query = data.get('search_query', '').strip()
     custom_timestamps = data.get('custom_timestamps', '').strip()
-    subtitle_template = data.get('subtitle_template', 'hormozi')
+    subtitle_template = data.get('subtitle_template', 'klap_kinetic')
+    reframe_mode = data.get('reframe_mode', 'smart_reframe')
     fmt = data.get('format', '9:16')
     max_clips = int(data.get('max_clips', 3))
 
@@ -88,7 +89,8 @@ def process_job_background(job_id: str, data: dict):
             output_dir=CLIPS_DIR,
             vertical=is_vertical,
             segments=segments,
-            subtitle_template=subtitle_template
+            subtitle_template=subtitle_template,
+            reframe_mode=reframe_mode
         )
 
         # Step 5: Format Results
@@ -101,6 +103,9 @@ def process_job_background(job_id: str, data: dict):
                 'end': c['end'],
                 'duration': round(c['end'] - c['start'], 1),
                 'reason': c.get('reason', ''),
+                'viral_score': c.get('viral_score', 96),
+                'viral_label': c.get('viral_label', 'Viral Sensation 🔥'),
+                'hook_reason': c.get('hook_reason', 'High engagement dialogue flow'),
                 'filename': fname,
                 'stream_url': f'/stream/{fname}',
                 'download_url': f'/download/{fname}'
