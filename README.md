@@ -17,7 +17,7 @@
 <br/>
 
 <a href="https://github.com/mindcreative134-creator/lipperai/releases/latest">
-  <img src="https://img.shields.io/badge/⬇️_DOWNLOAD_OFFICIAL_APK-v1.0.0-success?style=for-the-badge&logo=android" alt="Download APK" height="42">
+  <img src="https://img.shields.io/badge/⬇️_DOWNLOAD_OFFICIAL_APK-v1.0.1-success?style=for-the-badge&logo=android" alt="Download APK" height="42">
 </a>
 <a href="http://localhost:5000">
   <img src="https://img.shields.io/badge/🌐_OPEN_WEB_STUDIO-PORT_5000-blueviolet?style=for-the-badge" alt="Web Studio" height="42">

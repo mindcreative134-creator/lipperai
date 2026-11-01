@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../database/db_helper.dart';
 import '../models/clip_item.dart';
+import 'reel_player_screen.dart';
 
 class SavedClipsScreen extends StatefulWidget {
   final String serverUrl;
@@ -38,6 +39,12 @@ class _SavedClipsScreenState extends State<SavedClipsScreen> {
         const SnackBar(content: Text("Clip removed from local SQLite database")),
       );
     }
+  }
+
+  String _extractVideoId(String url) {
+    final reg = RegExp(r'(?:v=|\/)([0-9A-Za-z_-]{11}).*');
+    final match = reg.firstMatch(url);
+    return match?.group(1) ?? "";
   }
 
   @override
@@ -89,6 +96,11 @@ class _SavedClipsScreenState extends State<SavedClipsScreen> {
       itemCount: _savedClips.length,
       itemBuilder: (context, index) {
         final clip = _savedClips[index];
+        final vId = _extractVideoId(clip.streamUrl);
+        final thumbUrl = vId.isNotEmpty
+            ? "https://i.ytimg.com/vi/$vId/hqdefault.jpg"
+            : "";
+
         return Card(
           margin: const EdgeInsets.only(bottom: 16),
           color: const Color(0xFF111827),
@@ -112,7 +124,7 @@ class _SavedClipsScreenState extends State<SavedClipsScreen> {
                       ),
                       child: Text(
                         "REEL #${index + 1} • ${clip.duration.toInt()}s",
-                        style: const TextStyle(color: Color(0xFF818CF8), fontSize: 10, fontWeight: FontWeight.bold),
+                        style: const TextStyle(color: Color(0xFF818CF8), fontSize: 11, fontWeight: FontWeight.bold),
                       ),
                     ),
                     IconButton(
@@ -122,15 +134,52 @@ class _SavedClipsScreenState extends State<SavedClipsScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  clip.title,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                const SizedBox(height: 10),
+
+                // Thumbnail & Title Row
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (thumbUrl.isNotEmpty)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          thumbUrl,
+                          width: 80,
+                          height: 56,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Container(
+                            width: 80,
+                            height: 56,
+                            color: Colors.grey.shade800,
+                            child: const Icon(Icons.movie, color: Colors.white38),
+                          ),
+                        ),
+                      ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            clip.title,
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            "Timestamp: ${clip.start.toInt()}s - ${clip.end.toInt()}s",
+                            style: TextStyle(color: Colors.grey.shade400, fontSize: 11),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
+
                 if (clip.reason.isNotEmpty) ...[
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 8),
                   Text(
                     clip.reason,
                     style: TextStyle(color: Colors.grey.shade400, fontSize: 12),
@@ -138,25 +187,53 @@ class _SavedClipsScreenState extends State<SavedClipsScreen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  height: 44,
-                  child: ElevatedButton.icon(
-                    onPressed: () async {
-                      final url = "${widget.serverUrl}${clip.downloadUrl}";
-                      final uri = Uri.parse(url);
-                      if (await canLaunchUrl(uri)) {
-                        await launchUrl(uri, mode: LaunchMode.externalApplication);
-                      }
-                    },
-                    icon: const Icon(Icons.download_rounded, size: 18),
-                    label: const Text("Download to Phone Gallery", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6366F1),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                const SizedBox(height: 14),
+
+                // Action Buttons
+                Row(
+                  children: [
+                    // Watch Reel with Animated Subtitles
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ReelPlayerScreen(clip: clip, videoId: vId),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.play_arrow_rounded, size: 20),
+                        label: const Text("Watch Reel", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF6366F1),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                        ),
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 10),
+                    // Open YouTube directly
+                    ElevatedButton(
+                      onPressed: () async {
+                        final startSec = clip.start.toInt();
+                        final url = vId.isNotEmpty
+                            ? "https://www.youtube.com/watch?v=$vId&t=${startSec}s"
+                            : clip.streamUrl;
+                        final uri = Uri.parse(url);
+                        if (await canLaunchUrl(uri)) {
+                          await launchUrl(uri, mode: LaunchMode.externalApplication);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent.withOpacity(0.2),
+                        foregroundColor: Colors.redAccent,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      ),
+                      child: const Icon(Icons.open_in_new, size: 18),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -166,4 +243,3 @@ class _SavedClipsScreenState extends State<SavedClipsScreen> {
     );
   }
 }
-
