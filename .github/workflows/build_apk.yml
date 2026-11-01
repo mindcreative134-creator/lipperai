@@ -1,9 +1,12 @@
-name: Build Android APK
+name: Build & Release Android APK
 
 on:
   push:
     branches: [ main, master ]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -31,9 +34,36 @@ jobs:
         working-directory: ./mobile_app
         run: flutter build apk --release
 
+      - name: Prepare APK for Release
+        run: |
+          mkdir -p release_output
+          cp mobile_app/build/app/outputs/flutter-apk/app-release.apk release_output/ClipperAI-v1.0.0.apk
+
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ClipperAI-Release-APK
-          path: mobile_app/build/app/outputs/flutter-apk/app-release.apk
+          path: release_output/ClipperAI-v1.0.0.apk
 
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0
+          name: ClipperAI v1.0.0 (Official Release)
+          draft: false
+          prerelease: false
+          body: |
+            ## 🎉 ClipperAI - Viral Reel Maker & AI Video Clipper (v1.0.0)
+
+            ### 🚀 What's New:
+            - **100% Free Video Highlight Cutter** (No OpusClip/Klap subscription needed)
+            - **Multi-Modal Audio & Dialogue Engine** (Tracks laughter, excitement, voice pitch)
+            - **Word-by-Word Voice-Synced Subtitles** (Viral Hormozi Yellow, Minimal White, Neon Cyber)
+            - **No Mid-Sentence Cuts** (Sentence Boundary Snapper ensures complete spoken thoughts)
+            - **Local SQLite Database** (All generated reels saved offline on your device)
+
+            ### 📲 How to Install:
+            Download **`ClipperAI-v1.0.0.apk`** below, tap to install on your Android device!
+          files: release_output/ClipperAI-v1.0.0.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
