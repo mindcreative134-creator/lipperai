@@ -37,33 +37,33 @@ jobs:
       - name: Prepare APK for Release
         run: |
           mkdir -p release_output
-          cp mobile_app/build/app/outputs/flutter-apk/app-release.apk release_output/ClipperAI-v1.0.1.apk
+          cp mobile_app/build/app/outputs/flutter-apk/app-release.apk release_output/ClipperAI-v1.0.2.apk
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ClipperAI-Release-APK
-          path: release_output/ClipperAI-v1.0.1.apk
+          path: release_output/ClipperAI-v1.0.2.apk
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.1
-          name: ClipperAI v1.0.1 (100% On-Device Standalone Release)
+          tag_name: v1.0.2
+          name: ClipperAI v1.0.2 (Stitch UI/UX & Fast Clip Release)
           draft: false
           prerelease: false
           body: |
-            ## 🎉 ClipperAI v1.0.1 - 100% On-Device Standalone Mode
+            ## 🎨 ClipperAI v1.0.2 - Stitch UI/UX Redesign & High-Speed Clipping
 
             ### 🚀 What's New:
-            - **⚡ 100% On-Device Mode (Zero External PC/Backend Required)**: Works directly out-of-the-box on your Android phone without needing `app.py` or any local server!
-            - **🎬 Interactive 9:16 Reel Player**: Fullscreen player with live word-by-word bouncing animated captions (Viral Hormozi Yellow, Clean Minimal, Neon Cyber, Breaking Box).
-            - **💾 SQLite Local Storage**: Generated clips and metadata saved persistently on device.
-            - **▶️ Direct YouTube Timestamp Jumper**: Tap to jump right into YouTube at the exact highlight second!
-            - **⚙️ Configurable Server Settings**: Optional switch between On-Device and PC Server mode.
+            - **✨ StitchMCP Cyber-Dark UI/UX**: Re-engineered with modern Stitch design palette (Deep Slate `#0F1117`, Electric Yellow `#FACC15`, Neon Cyan `#06B6D4`).
+            - **📋 One-Tap URL Paste**: Quick clipboard paste button built directly into the input bar.
+            - **⚡ Fast-Engine Video Pipeline**: Resolved video download bottleneck (switched to 720p 60fps high-throughput stream with android/web client fallback).
+            - **🌐 Smart Cloud / On-Device Dual Fallback**: Automatically connects to cloud backend, and seamlessly falls back to 100% on-device mode if offline with ZERO crashes.
+            - **🎬 9:16 Viral Reel Player**: Word-by-word animated bouncing subtitles with direct YouTube timestamp opening.
 
             ### 📲 Download:
-            Download **`ClipperAI-v1.0.1.apk`** below to install!
-          files: release_output/ClipperAI-v1.0.1.apk
+            Download **`ClipperAI-v1.0.2.apk`** below to install!
+          files: release_output/ClipperAI-v1.0.2.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -17,7 +17,7 @@ def extract_video_id(url: str) -> str:
 
 def download_video(url: str, output_dir: str = "downloads") -> dict:
     """
-    Downloads the YouTube video in MP4 format (best quality up to 1080p).
+    Downloads the YouTube video in MP4 format (optimized for speed and 9:16 reels).
     Returns a dict with video path, title, duration, and video_id.
     """
     os.makedirs(output_dir, exist_ok=True)
@@ -26,18 +26,20 @@ def download_video(url: str, output_dir: str = "downloads") -> dict:
     out_template = os.path.join(output_dir, "%(id)s.%(ext)s")
     
     ydl_opts = {
-        'format': 'bestvideo[ext=mp4][height<=1080]+bestaudio[ext=m4a]/best[ext=mp4]/best',
+        'format': 'bestvideo[height<=720]+bestaudio/best[height<=720]/best',
         'outtmpl': out_template,
         'merge_output_format': 'mp4',
+        'socket_timeout': 30,
+        'retries': 3,
+        'extractor_args': {'youtube': {'player_client': ['android', 'web']}},
         'quiet': False,
         'no_warnings': True,
     }
     
-    print(f"\n[1/4] Downloading video from: {url}")
+    print(f"\n[1/4] Fast-downloading video from: {url}")
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
         filename = ydl.prepare_filename(info)
-        # Ensure mp4 extension
         base, _ = os.path.splitext(filename)
         final_filename = base + ".mp4"
         
@@ -47,4 +49,3 @@ def download_video(url: str, output_dir: str = "downloads") -> dict:
             'duration': info.get('duration', 0),
             'file_path': final_filename
         }
-
