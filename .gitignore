@@ -21,4 +21,5 @@ mobile_app/.packages
 mobile_app/build/
 mobile_app/.pub-cache/
 mobile_app/.pub/
-
+.gradle/
+**/android/.gradle/
